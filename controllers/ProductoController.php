@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/Producto.php';
+require_once __DIR__ . '/../models/Producto.php';
 
 class ProductoController {
 
@@ -15,7 +15,7 @@ class ProductoController {
         try {
 
             $productos = $this->model->getAllProductos();
-            return $productos;
+            return json_encode($productos);
 
         } catch (Exception $e){
 
@@ -28,7 +28,7 @@ class ProductoController {
         try {
 
             $producto = $this->model->getProductoById($id);
-            return $producto;
+            return json_encode($producto);
 
         } catch (Exception $e) {
 
@@ -76,6 +76,25 @@ class ProductoController {
         }
     }
 
+}
+
+// Recibir peticiones
+if(isset($_POST['accion']) && $_POST['accion'] == 'insertar'){
+
+    $nombre = $_POST['nombre'];
+    $precio = $_POST['precio'];
+    $stock = $_POST['stock'];
+
+    $productoController = new ProductoController();
+    $productoController->insertarProducto($nombre, $precio, $stock);
+
+}
+
+if(isset($_GET['accion']) && $_GET['accion'] == 'obtenerProductos'){
+
+    $productoController = new ProductoController();
+    $productos = $productoController->obtenerProductos();
+    echo $productos;
 }
 
 ?>

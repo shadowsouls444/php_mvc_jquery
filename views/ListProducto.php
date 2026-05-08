@@ -20,19 +20,24 @@ $productos = $productoController->obtenerProductos();
 <body>
     <nav class="bg-dark p-3">
         <form class="form-inline">
-            <a href="views/ListProducto.php" class="btn btn-success">
-    Ver todos los productos
-</a>
+            <a href="http://localhost/MAB/views/ListProducto.php" class="btn btn-success">
+                Gestionar productos
+            </a>
 
-<a href="views/FormProducto.php" class="btn btn-primary">
-    Añadir
-</a>
+            <a href="http://localhost/MAB/views/FormProducto.php" class="btn btn-primary">
+                Añadir
+            </a>
         </form>
     </nav>
 
     <br>
 
     <div class="container">
+        <button id="btnVerTodos" class="btn btn-outline-primary">Ver todos los productos</button>
+
+        <br>
+        <br>
+
         <table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
@@ -42,19 +47,7 @@ $productos = $productoController->obtenerProductos();
                     <th scope="col">Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php foreach ($productos as $producto) { ?>
-                <tr>
-                    <td><?= $producto['nombre'] ?></td>
-                    <td>$<?= $producto['precio'] ?></td>
-                    <td><?= $producto['stock'] ?></td>
-                    <td>
-                        <a href="#" class="btn btn-sm btn-primary">Editar</a>
-                        <a href="#" class="btn btn-sm btn-danger">Eliminar</a>
-                    </td>
-                </tr>
-                <?php } ?>
-            </tbody>
+            <tbody id="tBody"></tbody>
         </table>
     </div>
 
@@ -65,8 +58,35 @@ $productos = $productoController->obtenerProductos();
         $(document).ready(function () {
 
             $('#btnVerTodos').click(function () {
-        
-            console.log($productos)
+
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost/MAB/controllers/ProductoController.php',
+                    dataType: 'json',
+                    data: {
+                        accion: "obtenerProductos"
+                    },
+                    success: function (response) {
+
+                        response.forEach(function (producto) {
+                            var filas = '<tr>' +
+                                '<td>' + producto['nombre'] + '</td>' +
+                                '<td>' + producto['precio'] + '</td>' +
+                                '<td>' + producto['stock'] + '</td>' +
+                                '<td>' +
+                                '<a href="#" class="btn btn-sm btn-primary">Editar</a>' +
+                                '<a href="#" class="btn btn-sm btn-danger">Eliminar</a>' +
+                                '</td>' +
+                                '</tr>';
+
+                            $('#tBody').append(filas);
+                        })
+
+                    },
+                    error: function (response) {
+                        alert('Ocurrio un error al consultar los productos')
+                    }
+                })
 
             })
 
